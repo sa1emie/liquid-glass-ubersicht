@@ -1,0 +1,8 @@
+# Generated per-machine wallpaper texture
+glass.widget/bg.jpg
+
+# Local overrides / caches
+wallpaper.path
+*.cache
+.last-run
+.DS_Store
