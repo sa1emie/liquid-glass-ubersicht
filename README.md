@@ -8,6 +8,8 @@ This is the engine behind [liquid-glass-weather](https://github.com/sa1emie/liqu
 [liquid-glass-discovery](https://github.com/sa1emie/liquid-glass-discovery), pulled out so you can use
 it on your own widgets.
 
+![Several widgets sharing one glass renderer](docs/showcase.png)
+
 ## Why it's a shader and not CSS
 
 The common web "liquid glass" recipe is an SVG displacement filter run through `backdrop-filter`.
@@ -25,9 +27,19 @@ screen, so the glass lines up with what's actually behind it.
 
 ## One context, many cards
 
-`glass.widget` is a single fullscreen canvas that draws the glass under every registered card each
-frame. Your widgets don't each spin up WebGL; they just publish where their card is. That's one GL
-context no matter how many widgets opt in.
+`glass.widget` owns the WebGL so your widgets don't have to. They just publish where their card is,
+and one renderer draws the glass under all of them. That's a fixed cost no matter how many widgets
+opt in — one base canvas for the cards, plus a second canvas for expand panels (see below).
+
+Rather than redraw every frame, the renderer tracks each card's position, hover, and size and only
+touches the GPU when something actually changes, so an idle desktop costs next to nothing.
+
+### Expand panels
+
+Widgets that open a modal (a click-to-expand reader, a full forecast) register that panel on a second
+list, `window.__glassModalRects`. It draws on a top canvas above your other widgets and paints a
+dimmed backdrop behind itself, so the panel reads as glass floating over a darkened desktop. Return
+`null` from the panel's `getEl` while it's closed and the backdrop fades out with it.
 
 ## Usage
 
@@ -68,12 +80,16 @@ context no matter how many widgets opt in.
 
 ### Registration API
 
-`window.__glassRects` is an array of `{ getEl, radius }`:
+`window.__glassRects` (cards) and `window.__glassModalRects` (expand panels) are arrays of
+`{ getEl, radius, hover }`:
 
 | Field | Type | Meaning |
 |---|---|---|
 | `getEl` | `() => HTMLElement \| null` | Returns your card element (return `null` when it shouldn't be drawn). |
 | `radius` | `number` | Corner radius in CSS px, to match your card's `border-radius`. |
+| `hover` | `boolean` (optional) | Set `false` on non-interactive cards so they don't brighten under the cursor. Defaults to on. |
+
+Register a modal exactly like a card, but push it onto `window.__glassModalRects` instead.
 
 ## Requirements
 

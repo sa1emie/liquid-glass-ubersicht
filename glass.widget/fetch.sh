@@ -20,7 +20,7 @@ if [[ ! -f "$OUT" ]] || [[ -n "$(/usr/bin/find "$OUT" -mtime +7 2>/dev/null)" ]]
     if [[ -s "$TMP" ]]; then
       /usr/bin/sips -s format jpeg "$TMP" --out "$OUT" >/dev/null 2>&1
     else
-      SRC="$HOME/Pictures/Wallpapers/liquid-glass-purple.png"
+      SRC="$HOME/Pictures/Wallpapers/mac-liquid-glass-purple.png"
       [[ -f "$SRC" ]] && /usr/bin/sips --resampleWidth 1600 -s format jpeg "$SRC" --out "$OUT" >/dev/null 2>&1
     fi
   fi
