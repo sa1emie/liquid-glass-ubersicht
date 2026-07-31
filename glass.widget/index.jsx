@@ -12,7 +12,7 @@
 import { css, React } from "uebersicht";
 
 const WDIR = "$HOME/Library/Application Support/Übersicht/widgets/glass.widget";
-export const command = `bash '${WDIR}/fetch.sh'`;
+export const command = `bash "${WDIR}/fetch.sh"`;
 export const refreshFrequency = 24 * 60 * 60 * 1000; // daily; bg regen is weekly
 
 const TEX_URL = "glass.widget/bg.jpg";
